@@ -1,3 +1,4 @@
+import uuid
 from flask import (
     Blueprint,
     current_app,
@@ -7,8 +8,10 @@ from flask import (
     request,
     url_for,
 )
+from dataclasses import asdict
 from movie_library.forms import MovieForm
-import uuid
+from movie_library.models import Movie
+
 
 pages = Blueprint(
     "pages", __name__, template_folder="templates", static_folder="static"
@@ -34,15 +37,17 @@ def add_movie():
     form = MovieForm()
 
     if form.validate_on_submit():
-        movie = {
-            "_id": uuid.uuid4().hex,
-            "title": form.title.data,
-            "year": form.year.data,
-        }
+        movie = Movie(
+            _id=uuid.uuid4().hex,
+            title=form.title.data,
+            director=form.director.data,
+            year=form.year.data,
+        )
 
-        current_app.db.movie.insert_one(movie)
+        current_app.db.movie.insert_one(asdict(movie))
 
         return redirect(url_for(".index"))
+        # return asdict(movie)
 
     return render_template(
         "new_movie.html", title="Movies Watchlist - Add Movie", form=form
