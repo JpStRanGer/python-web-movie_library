@@ -175,7 +175,7 @@ body {
     font-family: inherit;
     /* Slows the background colour change effect when we hover over the button, making
          it take 0.1s with an accelerating colour change */
-    transition: background 0.1s ease-in;
+    transition: background 0.1s ease-in-out;
 }
 
 
