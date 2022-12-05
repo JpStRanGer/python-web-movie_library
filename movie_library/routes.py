@@ -7,6 +7,7 @@ from flask import (
     redirect,
     request,
     url_for,
+    abort
 )
 from dataclasses import asdict
 from movie_library.forms import MovieForm
@@ -25,8 +26,8 @@ def index():
     return render_template(
         "index.html",
         title="Movies Watchlist",
-        movies_data=[],
-        # movies_data=movies,
+        # movies_data=[],
+        movies_data=movies,
     )
 
 
@@ -56,6 +57,17 @@ def add_movie():
     return render_template(
         "new_movie.html", title="Movies Watchlist - Add Movie", form=form
     )
+
+@pages.get("/movie/<string:_id>")
+def movie(_id: str):
+    try:
+        movie_data = current_app.db.movie.find_one({"_id", _id})
+    except:
+        abort(404)
+        
+
+    movie = Movie(**movie_data)
+    return render_template("movie_details.html", movie=movie)
 
 
 @pages.route("/toggle-theme")
