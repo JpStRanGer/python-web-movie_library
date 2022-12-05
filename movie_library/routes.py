@@ -7,7 +7,7 @@ from flask import (
     redirect,
     request,
     url_for,
-    abort
+    abort,
 )
 from dataclasses import asdict
 from movie_library.forms import MovieForm
@@ -58,16 +58,25 @@ def add_movie():
         "new_movie.html", title="Movies Watchlist - Add Movie", form=form
     )
 
+
 @pages.get("/movie/<string:_id>")
 def movie(_id: str):
     try:
-        movie_data = current_app.db.movie.find_one({"_id", _id})
+        movie_data = current_app.db.movie.find_one({"_id": _id})
     except:
+        print("ID not found!")
         abort(404)
-        
 
     movie = Movie(**movie_data)
     return render_template("movie_details.html", movie=movie)
+
+
+@pages.get("/movie/<string:_id>/rate")
+def rate_movie(_id: str):
+    rating = int(request.args.get("rating"))
+    print(rating)
+    current_app.db.movie.update_one({"_id": _id},{"$set":{"rating": rating}})
+    return redirect(url_for(".movie", _id=_id))
 
 
 @pages.route("/toggle-theme")
@@ -79,3 +88,10 @@ def toggle_theme():
         session["theme"] = "dark"
 
     return redirect(request.args.get("current_page"))
+
+
+@pages.route("/test")
+def test():
+    _id: str = "a41d3021f5da4fbe9e9252231f7fb021"
+    movie_data = current_app.db.movie.find_one({"_id": _id})
+    return movie_data
