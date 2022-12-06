@@ -9,10 +9,10 @@ from flask import (
     request,
     url_for,
     abort,
-    flash
+    flash,
 )
 from dataclasses import asdict
-from movie_library.forms import MovieForm, ExtendedMovieForm, RegisterForm
+from movie_library.forms import MovieForm, ExtendedMovieForm, RegisterForm, LoginForm
 from movie_library.models import Movie, User
 from passlib.hash import pbkdf2_sha256
 
@@ -33,7 +33,14 @@ def index():
         movies_data=movies,
     )
 
-@pages.route("/register", methods=["GET", "POST",],)
+
+@pages.route(
+    "/register",
+    methods=[
+        "GET",
+        "POST",
+    ],
+)
 def register():
     if session.get("email"):
         return redirect(url_for(".index"))
@@ -44,16 +51,46 @@ def register():
         user = User(
             _id=uuid.uuid4().hex,
             email=form.email.data,
-            password=pbkdf2_sha256.hash(form.password.data)
+            password=pbkdf2_sha256.hash(form.password.data),
         )
 
         current_app.db.user.insert_one(asdict(user))
 
         flash("User registered successfully", "success")
 
+        return redirect(url_for(".login"))
+
+    return render_template(
+        "register.html", title="Movies Watchlist - Register", form=form
+    )
+
+
+@pages.route("/login", methods=["GET","POST"])
+def login():
+    if session.get("email"):
         return redirect(url_for(".index"))
 
-    return render_template("register.html", title="Movies Watchlist - Register", form=form)
+    form = LoginForm()
+
+    if form.validate_on_submit():
+
+        user_data = current_app.db.user.find_one({"email": form.email.data})
+
+        if not user_data:
+            flash("Login credentials not correct", category="danger")
+            return redirect(url_for(".login"))
+
+        user = User(**user_data)
+
+        if user and pbkdf2_sha256.verify(form.password.data, user.password):
+            session["user_id"] = user._id
+            session["email"] = user.email
+            return redirect(url_for(".index"))
+
+        flash("Login credentials not correct", category="danger")
+
+    return render_template("login.html", title="Movie Watchlist - Login", form=form)
+
 
 
 @pages.route(
@@ -98,10 +135,8 @@ def edit(_id: str):
         movie.tags = form.tags.data
         movie.description = form.description.data
         movie.video_link = form.video_link.data
-        
-        current_app.db.movie.update_one(
-        {"_id": _id}, {"$set": asdict(movie)}
-        )
+
+        current_app.db.movie.update_one({"_id": _id}, {"$set": asdict(movie)})
         return redirect(url_for(".movie", _id=movie._id))
     return render_template("movie_form.html", movie=movie, form=form)
 

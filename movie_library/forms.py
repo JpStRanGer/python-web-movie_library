@@ -73,3 +73,17 @@ class RegisterForm(FlaskForm):
         ],
     )
     submit = SubmitField("Register")
+
+
+class LoginForm(FlaskForm):
+    email = StringField(
+        "Email", validators=[InputRequired(), Email(check_deliverability=True)]
+    )
+    password = PasswordField(
+        "Password",
+        validators=[
+            InputRequired(),
+            Length(min=5, message="Your password is to short!"),
+        ],
+    )
+    submit = SubmitField("Register")
