@@ -1,6 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField, TextAreaField, URLField
-from wtforms.validators import InputRequired, NumberRange
+from wtforms import (
+    IntegerField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+    URLField,
+    PasswordField,
+)
+from wtforms.validators import InputRequired, NumberRange, Email, Length, EqualTo
 
 
 class MovieForm(FlaskForm):
@@ -26,13 +33,13 @@ class StringListField(TextAreaField):
             return "\n".join(self.data)
         else:
             return ""
-    
-    
+
     def process_formdata(self, valuelist):
         if valuelist and valuelist[0]:
             self.data = [line.strip() for line in valuelist[0].split("\n")]
         else:
             self.data = []
+
 
 class ExtendedMovieForm(MovieForm):
     cast = StringListField("cast")
@@ -40,5 +47,29 @@ class ExtendedMovieForm(MovieForm):
     tags = StringListField("Tags")
     description = StringField("Description")
     video_link = StringField("Video link")
-    
+
     submit = SubmitField("Submit")
+
+
+class RegisterForm(FlaskForm):
+    email = StringField(
+        "Email", validators=[InputRequired(), Email(check_deliverability=True)]
+    )
+    password = PasswordField(
+        "Password",
+        validators=[
+            InputRequired(),
+            Length(min=5, message="Your password is to short!"),
+        ],
+    )
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[
+            InputRequired(),
+            EqualTo(
+                "Password",
+                message="This password did not match the one in the password field!",
+            ),
+        ],
+        submit = SubmitField("Register")
+    )

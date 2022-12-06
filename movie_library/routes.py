@@ -9,10 +9,12 @@ from flask import (
     request,
     url_for,
     abort,
+    flash
 )
 from dataclasses import asdict
-from movie_library.forms import MovieForm, ExtendedMovieForm
-from movie_library.models import Movie
+from movie_library.forms import MovieForm, ExtendedMovieForm, RegisterForm
+from movie_library.models import Movie, User
+from passlib.hash import pbkdf2_sha256
 
 
 pages = Blueprint(
