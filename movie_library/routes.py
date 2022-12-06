@@ -33,6 +33,28 @@ def index():
         movies_data=movies,
     )
 
+@pages.route("/add", methods=["GET", "POST",],)
+def register():
+    if session.get("email"):
+        return redirect(url_for(".index"))
+
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        user = User(
+            _id=uuid.uuid4().hex,
+            email=form.email.data,
+            password=pbkdf2_sha256.hash(form.password.data)
+        )
+
+        current_app.db.user.insert_one(asdict(user))
+
+        flash("User registered successfully", "success")
+
+        return redirect(url_for(".index"))
+
+    return render_template("register.html", title="Movies Watchlist - Register", form=form)
+
 
 @pages.route(
     "/add",
