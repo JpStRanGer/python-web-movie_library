@@ -33,7 +33,7 @@ def index():
         movies_data=movies,
     )
 
-@pages.route("/add", methods=["GET", "POST",],)
+@pages.route("/register", methods=["GET", "POST",],)
 def register():
     if session.get("email"):
         return redirect(url_for(".index"))

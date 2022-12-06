@@ -67,9 +67,9 @@ class RegisterForm(FlaskForm):
         validators=[
             InputRequired(),
             EqualTo(
-                "Password",
+                "password",
                 message="This password did not match the one in the password field!",
             ),
         ],
-        submit = SubmitField("Register")
     )
+    submit = SubmitField("Register")
