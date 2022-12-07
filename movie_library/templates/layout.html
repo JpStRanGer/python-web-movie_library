@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
     
-    {% block head_content %} {% endblock %}
+    {% block head_content %}
+    {% endblock %}
 </head>
 
 <body>
-{{ header(2,session.get("theme")) }}
-{# {{ header(session.get("email"),session.get("theme")) }} #}
+{{ header(session.get("email"),session.get("theme")) }}
     <main class="main">
         {% block main_content %} {% endblock %}
     </main>
