@@ -129,6 +129,10 @@ def add_movie():
             title=form.title.data,
             director=form.director.data,
             year=form.year.data,
+            cast=[],
+            series=[],
+            tags=[],
+
         )
 
         current_app.db.movie.insert_one(asdict(movie))
