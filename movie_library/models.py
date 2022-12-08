@@ -23,11 +23,14 @@ class Movie:
     title: str
     director: str
     year: int
-    cast: list[str] = field(default_factory=list)
-    series: list[str] = field(default_factory=list)
+    cast: list[str] = []
+    # cast: list[str] = field(default_factory=list)
+    series: list[str] = []
+    # series: list[str] = field(default_factory=list)
     last_watched: datetime = None
     rating: int = 0
-    tags: list[str] = field(default_factory=list)
+    tags: list[str] = []
+    # tags: list[str] = field(default_factory=list)
     description: str = None
     video_link: str = None
 
@@ -37,4 +40,5 @@ class User:
     _id: str
     email: str
     password: str
-    movies: list[str] = field(default_factory=list)
+    movies: list[str] = []
+    # movies: list[str] = field(default_factory=list)
