@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import  dataclass, field
 from datetime import datetime
 
 
@@ -23,13 +23,13 @@ class Movie:
     title: str
     director: str
     year: int
-    cast: list[str] = []
+    cast = field(default_factory=list)
     # cast: list[str] = field(default_factory=list)
-    series: list[str] = []
+    series = field(default_factory=list)
     # series: list[str] = field(default_factory=list)
     last_watched: datetime = None
     rating: int = 0
-    tags: list[str] = []
+    tags = field(default_factory=list)
     # tags: list[str] = field(default_factory=list)
     description: str = None
     video_link: str = None
